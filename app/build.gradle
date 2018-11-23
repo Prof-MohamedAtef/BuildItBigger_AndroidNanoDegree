@@ -1,7 +1,19 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // V2: Add the new Endpoints Framework plugin dependencies
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.2'
+    }
+}
 
 android {
     compileSdkVersion 27
+    flavorDimensions "version"
     defaultConfig {
         applicationId "gradle.nanodegree.ed.mo.prof.builditbiggerfourth"
         minSdkVersion 15
@@ -10,10 +22,35 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    productFlavors {
+        free {
+            dimension "version"
+            applicationId "gradle.nanodegree.ed.mo.prof.builditbiggertwo.free"
+            applicationIdSuffix ".free"
+            versionNameSuffix "-free"
+//            signingConfig signingConfigs.debug
+        }
+        paid {
+            dimension "version"
+            applicationId "gradle.nanodegree.ed.mo.prof.builditbiggertwo.paid"
+            applicationIdSuffix ".paid"
+            versionNameSuffix "-paid"
+//            signingConfig signingConfigs.debug
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:2.0.1'
+    }
+    sourceSets {
+        free {
+            manifest.srcFile 'src/free/AndroidManifest.xml'
         }
     }
 }
@@ -26,10 +63,16 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.google.android.gms:play-services-ads:15.0.1'
     implementation 'com.google.api-client:google-api-client:1.23.0'
-    implementation 'com.google.http-client:google-http-client-android:1.23.0'
-    implementation 'com.google.code.findbugs:jsr305:3.0.1'
+
+    implementation 'com.google.code.findbugs:jsr305:2.0.1'
+
     compile project(':JokingJavaLib')
     compile project(':jokingandroidlib')
+    // V2: Endpoints Framework v2 migration
+    endpointsServer project(path: ':Jokingbackend', configuration: 'endpoints')
+    compile 'com.google.api-client:google-api-client:+'
+    implementation 'com.google.http-client:google-http-client-android:1.22.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

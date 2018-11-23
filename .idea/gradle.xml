@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/JokingJavaLib" />
+            <option value="$PROJECT_DIR$/Jokingbackend" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/jokingandroidlib" />
           </set>
