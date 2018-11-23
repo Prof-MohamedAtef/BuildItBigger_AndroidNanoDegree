@@ -9,8 +9,7 @@ package gradle.nanodegree.ed.mo.prof.builditbiggerfourth;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-
-import javax.inject.Named;
+import gradle.nanodegree.ed.mo.prof.jokingjavalib.JokerClass;
 
 /** An endpoint class we are exposing */
 @Api(
@@ -25,12 +24,10 @@ import javax.inject.Named;
 public class MyEndpoint {
 
     /** A simple endpoint method that takes a name and says Hi back */
-    @ApiMethod(name = "sayHi")
-    public MyBean sayHi(@Named("name") String name) {
+    @ApiMethod(name = "getJoke")
+    public MyBean getJoke() {
         MyBean response = new MyBean();
-        response.setData("Hi, " + name);
-
+        response.setData(JokerClass.MyToldJokes());
         return response;
     }
-
 }

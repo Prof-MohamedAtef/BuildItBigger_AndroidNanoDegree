@@ -37,6 +37,7 @@ dependencies {
     compile 'com.google.endpoints:endpoints-framework:2.0.9'
     compile 'javax.inject:javax.inject:1'
     compile 'javax.servlet:servlet-api:2.5'
+    compile project(':JokingJavaLib')
 }
 
 appengine {
@@ -51,11 +52,11 @@ appengine {
             promote = new Boolean(promoteProp)
         }
     }
-    appengine.run.port = 8888
-    run {
+//    appengine.run.port = 3000
+//    run {
         // Timeout after 60 seconds
-        startSuccessTimeout = 60
-    }
+//        startSuccessTimeout = 750
+//    }
 //  downloadSdk = true
 //  appcfg {
 //    oauth2 = true
