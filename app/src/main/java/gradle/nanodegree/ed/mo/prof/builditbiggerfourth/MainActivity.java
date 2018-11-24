@@ -35,14 +35,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void launchJokingActivity(View view) {
-        String joke=JokerClass.MyToldJokes();
-        if (joke==null&&joke.length()==0) {
-            Toast.makeText(this, getResources().getString(R.string.Whatisyourjoke), Toast.LENGTH_SHORT).show();
-        }else{
-            Intent intent=new Intent(getApplicationContext(), JokeActivity.class);
-            intent.putExtra(JokeActivity.JOKE, joke);
-            startActivity(intent);
-        }
-    }
+//    public void launchJokingActivity(View view) {
+//
+//    }
 }

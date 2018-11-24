@@ -53,10 +53,6 @@ appengine {
         }
     }
 //    appengine.run.port = 3000
-//    run {
-        // Timeout after 60 seconds
-//        startSuccessTimeout = 750
-//    }
 //  downloadSdk = true
 //  appcfg {
 //    oauth2 = true
@@ -65,4 +61,10 @@ appengine {
 //    getClientLibsOnBuild = true
 //    getDiscoveryDocsOnBuild = true
 //  }
+//  httpAddress= "0.0.0.0"
+    run{
+        host='0.0.0.0'
+        // Timeout after 60 seconds
+        startSuccessTimeout = 750
+    }
 }
