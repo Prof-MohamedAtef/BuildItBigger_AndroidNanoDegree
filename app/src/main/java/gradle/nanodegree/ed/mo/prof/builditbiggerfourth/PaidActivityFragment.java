@@ -2,7 +2,6 @@ package gradle.nanodegree.ed.mo.prof.builditbiggerfourth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,59 +11,55 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 import gradle.nanodegree.ed.mo.prof.jokingandroidlib.JokeActivity;
-import gradle.nanodegree.ed.mo.prof.jokingjavalib.JokerClass;
 
 /**
- * Created by Prof-Mohamed Atef on 11/22/2018.
+ * Created by Prof-Mohamed Atef on 11/23/2018.
  */
 
-public class MainActivityFragment extends Fragment implements OnTaskCompleted{
-
-    AdView adView;
-    public ProgressDialog mProgressDialog;
-    GCEndPointAsyncTask gcEndPointAsyncTask;
+public class PaidActivityFragment extends Fragment implements OnTaskCompleted {
     private static String PhysicalIPAddress="http://192.168.1.2:8080/_ah/api/";
     private static String EmulatorIPAddress="http://10.0.2.2:8080/_ah/api/";
+
+    Button BTNFetchJoke;
+    ProgressDialog mProgressDialog;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setTheme(R.style.PaidTheme);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_main, container, false);
-        Button runAsync= view.findViewById(R.id.btn_Fetch);
-        runAsync.setOnClickListener(new View.OnClickListener() {
+        View view=inflater.inflate(R.layout.fragment_paid, container, false);
+        BTNFetchJoke=(Button)view.findViewById(R.id.btn_Fetch);
+        BTNFetchJoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getJokes();
                 mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading_msg), getString(R.string.pls_wait), true);
-                gcEndPointAsyncTask=new GCEndPointAsyncTask(MainActivityFragment.this);
-//                gcEndPointAsyncTask.execute();
-                //ip for virtual Box
-//                gcEndPointAsyncTask.execute("http://192.168.221.2:8080/_ah/api/");
-                // my ip address on LAN (IPV4)
-//                gcEndPointAsyncTask.execute(PhysicalIPAddress);
-                gcEndPointAsyncTask.execute(EmulatorIPAddress);
-
             }
         });
-        if (BuildConfig.FREE_VERSION){
-            adView=(AdView) view.findViewById(R.id.adView);
-            AdRequest adRequest=new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
-            adView.loadAd(adRequest);
-        }
         return view;
+    }
+
+    private void getJokes() {
+        GCEndPointAsyncTask gcEndPointAsyncTask= new GCEndPointAsyncTask(PaidActivityFragment.this);
+        gcEndPointAsyncTask.execute(EmulatorIPAddress);
     }
 
     private static String ConnTimedOut="connect timed out";
     private static String Failed10022="failed to connect to /10.0.2.2 (port 8080) after 20000ms";
     private static String ECONNREFUSED="failed to connect to /"+ PhysicalIPAddress +"(port 8080) after 20000ms: isConnected failed: ECONNREFUSED (Connection refused)";
+
+
     @Override
     public void onTaskCompleted(String result) {
         mProgressDialog.dismiss();
         if (result.length()>0){
-
             if (result.equals(ConnTimedOut)||result.equals(ECONNREFUSED)||result.equals(Failed10022)){
                 Toast.makeText(getActivity(), ConnTimedOut, Toast.LENGTH_SHORT).show();
             }else {

@@ -1,8 +1,7 @@
-package gradle.nanodegree.ed.mo.prof.builditbiggerfourth;
+package gradle.nanodegree.ed.mo.prof.builditbiggerfourth.free;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,41 +11,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+
+import gradle.nanodegree.ed.mo.prof.builditbiggerfourth.BuildConfig;
+import gradle.nanodegree.ed.mo.prof.builditbiggerfourth.GCEndPointAsyncTask;
+import gradle.nanodegree.ed.mo.prof.builditbiggerfourth.OnTaskCompleted;
+import gradle.nanodegree.ed.mo.prof.builditbiggerfourth.R;
 import gradle.nanodegree.ed.mo.prof.jokingandroidlib.JokeActivity;
-import gradle.nanodegree.ed.mo.prof.jokingjavalib.JokerClass;
 
 /**
- * Created by Prof-Mohamed Atef on 11/22/2018.
+ * Created by Prof-Mohamed Atef on 11/23/2018.
  */
 
 public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
-    AdView adView;
-    public ProgressDialog mProgressDialog;
-    GCEndPointAsyncTask gcEndPointAsyncTask;
     private static String PhysicalIPAddress="http://192.168.1.2:8080/_ah/api/";
     private static String EmulatorIPAddress="http://10.0.2.2:8080/_ah/api/";
+
+    Button BTNFetchJoke;
+    ProgressDialog mProgressDialog;
+    AdView adView;
+    AdRequest adRequest;
+    InterstitialAd interstitialAd;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_main, container, false);
-        Button runAsync= view.findViewById(R.id.btn_Fetch);
-        runAsync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading_msg), getString(R.string.pls_wait), true);
-                gcEndPointAsyncTask=new GCEndPointAsyncTask(MainActivityFragment.this);
-//                gcEndPointAsyncTask.execute();
-                //ip for virtual Box
-//                gcEndPointAsyncTask.execute("http://192.168.221.2:8080/_ah/api/");
-                // my ip address on LAN (IPV4)
-//                gcEndPointAsyncTask.execute(PhysicalIPAddress);
-                gcEndPointAsyncTask.execute(EmulatorIPAddress);
-
-            }
-        });
+        BTNFetchJoke=(Button)view.findViewById(R.id.btn_Fetch);
+        mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading_msg), getString(R.string.pls_wait), true);
         if (BuildConfig.FREE_VERSION){
             adView=(AdView) view.findViewById(R.id.adView);
             AdRequest adRequest=new AdRequest.Builder()
@@ -54,12 +51,24 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
                     .build();
             adView.loadAd(adRequest);
         }
+        BTNFetchJoke.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getJokes();
+            }
+        });
         return view;
+    }
+
+    private void getJokes() {
+        GCEndPointAsyncTask gcEndPointAsyncTask= new GCEndPointAsyncTask(MainActivityFragment.this);
+        gcEndPointAsyncTask.execute(EmulatorIPAddress);
     }
 
     private static String ConnTimedOut="connect timed out";
     private static String Failed10022="failed to connect to /10.0.2.2 (port 8080) after 20000ms";
     private static String ECONNREFUSED="failed to connect to /"+ PhysicalIPAddress +"(port 8080) after 20000ms: isConnected failed: ECONNREFUSED (Connection refused)";
+
     @Override
     public void onTaskCompleted(String result) {
         mProgressDialog.dismiss();

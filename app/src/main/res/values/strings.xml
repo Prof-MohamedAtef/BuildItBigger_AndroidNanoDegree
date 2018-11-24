@@ -4,6 +4,8 @@
     <string name="action_settings">Settings</string>
     <string name="press_btn">Press the button for more jokes!</string>
     <string name="ad_unit_test_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstial_unit_test_id">ca-app-pub-3940256099942544/1033173712</string>
+
     <string name="Whatisyourjoke">You haven\'t set any Jokes later!</string>
     <string name="loading_msg">Loading ...</string>
     <string name="pls_wait">Please Wait</string>
