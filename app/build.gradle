@@ -74,16 +74,16 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile 'com.google.android.gms:play-services-ads:15.0.1'
+    freeImplementation 'com.google.android.gms:play-services-ads:15.0.1'
     implementation 'com.google.api-client:google-api-client:1.23.0'
 
     implementation 'com.google.code.findbugs:jsr305:2.0.1'
 
-    compile project(':JokingJavaLib')
-    compile project(':jokingandroidlib')
+    implementation project(':JokingJavaLib')
+    implementation project(':jokingandroidlib')
     // V2: Endpoints Framework v2 migration
     endpointsServer project(path: ':Jokingbackend', configuration: 'endpoints')
-    compile 'com.google.api-client:google-api-client:+'
+    implementation 'com.google.api-client:google-api-client:+'
     implementation 'com.google.http-client:google-http-client-android:1.22.0'
 
 

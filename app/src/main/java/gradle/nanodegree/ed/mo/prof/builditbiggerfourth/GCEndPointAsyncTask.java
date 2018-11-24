@@ -40,7 +40,7 @@ public class GCEndPointAsyncTask extends AsyncTask<String, Void, String> {
         try{
             return myApi.getJoke().execute().getData();
         }catch (Exception e){
-            return e.getMessage();
+            return null;
         }
     }
 

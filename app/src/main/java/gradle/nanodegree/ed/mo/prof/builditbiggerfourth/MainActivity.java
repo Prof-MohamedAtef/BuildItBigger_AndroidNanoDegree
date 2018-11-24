@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         unbinder= ButterKnife.bind(this);
         MainActivityFragment mainActivityFragment=new MainActivityFragment();
 
-
         if (BuildConfig.FREE_VERSION){
             getSupportFragmentManager().beginTransaction()
                     .replace(FrameLayout.getId(), mainActivityFragment, "Tag").commit();
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(FrameLayout.getId(), new PaidActivityFragment(), "Tag").commit();
         }
-
     }
 
     @Override
