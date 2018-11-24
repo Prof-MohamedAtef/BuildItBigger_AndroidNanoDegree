@@ -12,8 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+
 import gradle.nanodegree.ed.mo.prof.jokingandroidlib.JokeActivity;
 import gradle.nanodegree.ed.mo.prof.jokingjavalib.JokerClass;
 
@@ -23,6 +27,8 @@ import gradle.nanodegree.ed.mo.prof.jokingjavalib.JokerClass;
 
 public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
+    InterstitialAd interstitialAd;
+    private boolean adOnScreen=false;
     AdView adView;
     public ProgressDialog mProgressDialog;
     GCEndPointAsyncTask gcEndPointAsyncTask;
@@ -32,10 +38,38 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_main, container, false);
+        if (BuildConfig.FREE_VERSION){
+            adView=(AdView) view.findViewById(R.id.adView);
+            AdRequest adRequest=new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+            adView.loadAd(adRequest);
+
+            interstitialAd=new InterstitialAd(getActivity());
+            interstitialAd.setAdUnitId(getString(R.string.interstial_unit_test_id));
+
+            interstitialAd.setAdListener(new AdListener(){
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                    adOnScreen = false;
+                    startNewInterstitialAd();
+                }
+            });
+
+
+        }
+
         Button runAsync= view.findViewById(R.id.btn_Fetch);
         runAsync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (interstitialAd.isLoaded()){
+                    adOnScreen=true;
+                    interstitialAd.show();
+                }else {
+                    adOnScreen=false;
+                }
                 mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.loading_msg), getString(R.string.pls_wait), true);
                 gcEndPointAsyncTask=new GCEndPointAsyncTask(MainActivityFragment.this);
 //                gcEndPointAsyncTask.execute();
@@ -47,14 +81,15 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
             }
         });
-        if (BuildConfig.FREE_VERSION){
-            adView=(AdView) view.findViewById(R.id.adView);
-            AdRequest adRequest=new AdRequest.Builder()
-                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                    .build();
-            adView.loadAd(adRequest);
-        }
+        startNewInterstitialAd();
         return view;
+    }
+
+    private void startNewInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        interstitialAd.loadAd(adRequest);
     }
 
     private static String ConnTimedOut="connect timed out";
@@ -62,6 +97,7 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
     private static String ECONNREFUSED="failed to connect to /"+ PhysicalIPAddress +"(port 8080) after 20000ms: isConnected failed: ECONNREFUSED (Connection refused)";
     @Override
     public void onTaskCompleted(String result) {
+        adOnScreen=false;
         mProgressDialog.dismiss();
         if (result.length()>0){
 
@@ -77,6 +113,7 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
     @Override
     public void onTaskError() {
+        adOnScreen=false;
         Toast.makeText(getActivity(), getResources().getString(R.string.Whatisyourjoke), Toast.LENGTH_SHORT).show();
     }
 }

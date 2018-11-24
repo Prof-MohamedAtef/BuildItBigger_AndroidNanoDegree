@@ -37,6 +37,7 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
     AdView adView;
     AdRequest adRequest;
     InterstitialAd interstitialAd;
+    private boolean adOnScreen=false;
 
     @Nullable
     @Override
@@ -50,14 +51,41 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
                     .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                     .build();
             adView.loadAd(adRequest);
+
+            interstitialAd=new InterstitialAd(getActivity());
+            interstitialAd.setAdUnitId(getString(R.string.interstial_unit_test_id));
+
+            interstitialAd.setAdListener(new AdListener(){
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                    adOnScreen = false;
+                    startNewInterstitialAd();
+                }
+            });
+
         }
         BTNFetchJoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (interstitialAd.isLoaded()){
+                    adOnScreen=true;
+                    interstitialAd.show();
+                }else {
+                    adOnScreen=false;
+                }
                 getJokes();
+
             }
         });
         return view;
+    }
+
+    private void startNewInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        interstitialAd.loadAd(adRequest);
     }
 
     private void getJokes() {
@@ -71,6 +99,7 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
     @Override
     public void onTaskCompleted(String result) {
+        adOnScreen=false;
         mProgressDialog.dismiss();
         if (result.length()>0){
 
@@ -86,6 +115,7 @@ public class MainActivityFragment extends Fragment implements OnTaskCompleted{
 
     @Override
     public void onTaskError() {
+        adOnScreen=false;
         Toast.makeText(getActivity(), getResources().getString(R.string.Whatisyourjoke), Toast.LENGTH_SHORT).show();
     }
 }
